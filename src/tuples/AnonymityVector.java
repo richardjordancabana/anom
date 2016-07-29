@@ -1,5 +1,8 @@
 package tuples;
 
+import anom.Main;
+import static anom.Main.printV;
+
 public class AnonymityVector { 
 	// compares two vectors, right zeros are not taken into account
 	public static boolean compare(int a[],int b[]) {
@@ -176,10 +179,13 @@ public class AnonymityVector {
 
 	}
 
-  public static void main(String []args){
-	//for (int i=0; i<1000; i++)
-         //   System.out.println("i: "+ i+ "-> "+ AnonymityVector.nAnom(i));
-        //enumerate(10);
-      test();
-  }
+//  public static void main(String []args){
+//	//for (int i=0; i<1000; i++)
+//         //   System.out.println("i: "+ i+ "-> "+ AnonymityVector.nAnom(i));
+//        //enumerate(10);
+//      test();
+//        
+//  }
+        
+        
 }
