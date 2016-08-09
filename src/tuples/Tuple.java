@@ -68,10 +68,16 @@ public class Tuple {
 			sBase = pos(n, n, sBase, 0, a, base);
 			sAnom1 = pos(n, n, sAnom1, 0, a, anom1);
 			sAnom2 = pos(n, n, sAnom2, 0, a, anom2);
+                        System.out.println("SBASE: "+sBase.count);
+                        System.out.println("sAnom1: "+sAnom1.count);
+                        System.out.println("sAnom2: "+sAnom2.count);
 			long total = s(n, n);
 			double dist1 = (sAnom1.count*1.0)/ (sBase.count-1L);
 			double dist2 = (sAnom2.count*1.0)/ (sBase.count-1L);
 			resultado = dist2 - dist1;
+                       // System.out.println("DIST1: "+dist1);
+                        //System.out.println("DIST2: "+dist2);
+                        
 		}
 		return resultado;
 	}

@@ -51,7 +51,18 @@ public class AnonymityVector {
 		}
 		return res;
 	}
-
+        public static long s1(int n, int m) {
+		long res = 0L;
+		if (n < 0)
+			res =  0L; // no anonymity vectors for population= 0
+		else if ( n==0 || m == 1)
+			res = 1L; // value n at the first position; just one possibility
+		else {			
+			res = s1(n-m, m) + s1(n, m-1);
+			 
+		}
+		return res;
+	}
 	
 	/**
 	 * Number of anonymity vectors for a given population

@@ -272,9 +272,11 @@ public class Main {
                  System.out.print(v[i]+" ");
           System.out.println("");
 
-        int []constraint ={ 2, 3, 2, 4}; 
+        int []constraint ={ 9, 4, 3, 1}; 
         int []random ={24,3};
         int []base =  {2,3,2,4};
+        System.out.println(Arrays.toString(v));
+        System.out.println(Arrays.toString(constraint));
         System.out.println(Tuple.distance(n, base, random, constraint));
                 // 0.9977827050997783
     }
@@ -355,9 +357,83 @@ public class Main {
             printV(v);
 
     }
+    
+    //metodo dado un n genera q,f   times indica cuantas veces repite el proceso
+    //opt y voraz devuelven la media de todas los resultados obtenidos en times veces
+    public static void test(int n,int times, double opt,double voraz){
+           //int n=5;
+            double o=0;
+            double v=0;
+            for(int i =0; i< times;i++){
+        
+                Main m = new Main();
+                MyResult a;
+                /*for (int i=0; i<100;i++){
+                    System.out.println("i:"+i+" ");
+                    a = m.generateQF(100,5,5,true);
+                }*/
+                 //for (int i=0; i<100;i++)
+                    a = m.generateQF(n,5,9,5,9,true); // a true utiliza los rangos min max
+                int[] f=a.getFirst();
+                int[] c=a.getSecond();
+                Appointment apo = new Appointment(f, c);
 
-    public  static void main(String []args) {
-        //test5();
+                int[] vBase=getV(n,f);
+                int[] vRandom=anomRandom(n,f.length,f,c.length,c);
+                int[] vOptimo;
+                if(n<=25)
+                    vOptimo= apo.chocoLex();
+                else   vOptimo= null;
+                int[] vVoraz = anom2(n,f.length,f,c.length,c); 
+
+
+                double x=0;
+                double y=0;
+
+                vBase=cutArray(vBase);
+                vRandom=cutArray(vRandom);
+                if(n<=25)
+                vOptimo=cutArray(vOptimo);
+                vVoraz=cutArray(vVoraz);
+
+              System.out.print("VBASE :  ");
+              System.out.println(Arrays.toString(vBase)); 
+              System.out.print("vRandom :  ");
+              System.out.println(Arrays.toString(vRandom)); 
+              System.out.print("vOptimo :  ");
+              System.out.println(Arrays.toString(vOptimo)); 
+              System.out.print("vVoraz :  ");
+              System.out.println(Arrays.toString(vVoraz)); 
+              if(n<=25){
+              System.out.print(" Distancia (VBASE,VRANDOM,VOPTIMO) : ");
+              x=Tuple.distance(n, vBase, vRandom, vOptimo);
+              System.out.println(x);
+              }
+              System.out.print(" Distancia (VBASE,VRANDOM,VVORAZ) : ");
+              y=Tuple.distance(n, vBase, vRandom, vVoraz);
+              System.out.println(y);
+              
+              if(n>25){
+              o=0;
+              v+=y;
+              }else
+              {
+              o+=x;
+              v+=y;
+              }
+          
+            }
+            
+            voraz=v/times;
+            opt=o/times;
+           System.out.print("Valor voraz :  ");
+           System.out.println(voraz); 
+           System.out.print("Valor optimo :  ");
+           System.out.println(opt); 
+    }
+    
+    public static void testEjemplos(){
+         //test1();
         // compare3(20, 1, 20, 20, 4, 5, 5,1000);
         // i n q q1 q2 r r1 r2 it
         //compare(3, 20, 1, 20, 20, 4, 5, 5,1000);
@@ -381,48 +457,58 @@ public class Main {
         // test_n40_2(100); // 0.48 con search
         // AnonymityVector.test();
            
-        
-            int n=10;
-            Main m = new Main();
-            MyResult a;
-            /*for (int i=0; i<100;i++){
-                System.out.println("i:"+i+" ");
-                a = m.generateQF(100,5,5,true);
-            }*/
-        
-            a = m.generateQF(10,0,0,false);
-            int[] f=a.getFirst();
-            int[] c=a.getSecond();
-            int[] v1 = anom(n,f.length,f,c.length,c);
-            int[] v2 = anomRandom(n,f.length,f,c.length,c);
-            Appointment apo = new Appointment(f, c);
-            int[] v3=null;
-            if (n<=30)
-                v3= apo.chocoLex();
-            int [] v4 = anom2(n,f.length,f,c.length,c);
-            
-          System.out.print("V1 ANOM:  ");
-          System.out.println(Arrays.toString(v1)+"\r\n");
-          System.out.print("V2 ALEATORIO:  ");
-          System.out.println(Arrays.toString(v2)+"\r\n");
-          System.out.print("V3: INTELIGENTE  ");
-          System.out.println(Arrays.toString(v3)+"\r\n");
-          System.out.print("V4 VORAZ:  ");
-          System.out.println(Arrays.toString(v4)+"\r\n");
-          System.out.print(" Distancia (V1,V2,V3) : ");
-          System.out.println(Tuple.distance(n, v1, v2, v3));
-          System.out.print(" Distancia (V1,V2,V4) : ");
-          System.out.println(Tuple.distance(n, v1, v2, v4));
-          System.out.print(" Distancia (V1,V4,V3) : ");
-          System.out.println(Tuple.distance(n, v1, v4, v3));
+//        
          
+//            
+//          
+//          System.out.print(" Distancia (VBASE,VRANDOM,VOPTIMO) : ");
+//          System.out.println(Tuple.distance(n, vBase, vRandom, vOptimo));
+//          System.out.print(" Distancia (VBASE,VRANDOM,VVORAZ) : ");
+//          System.out.println(Tuple.distance(n, vBase, vRandom, vVoraz));
+
+         
+            /*long r1= AnonymityVector.s(100, 100);
+            long r2= AnonymityVector.s1(100, 100);
+            System.out.println("R1: " + r1);
+            System.out.println("R2: " + r2);
+        */
+    }
+    public  static void main(String []args) {
+            double res1=0;
+            double res2=0;
+            test(100,100,res1,res2);
+            
+
             return;
             
         //test1();
     }
+    //elimina los ceros por la derecha
+    public static int[] cutArray(int[] v)
+    {
+        int cont=v.length;
+        boolean encontrado=false;
+        while(cont>0 && !encontrado)
+        {   cont--;
+            if(v[cont]!=0)
+               encontrado=true;
+        }
+        int[] res=new int[cont+1];
+        for(int i=0;i<cont+1;i++)
+            res[i]=v[i];
+        return res;
+    }
+    public static int[] getV(int n, int[]q){
+        int[] a= new int [n];
+        for (int i =0;i<q.length;i++){
+            a[q[i]-1]++;
+        }
+        
+        return a;
+    }
 
-    //generate q and f random length    n population  topq and topf considered if top is true
-    public   MyResult generateQF(int n,int topq, int topf, boolean top){
+    //generate q and f random length    n population  topq and topf considered if range is true
+    public   MyResult generateQF(int n,int minq, int maxq, int minf, int maxf, boolean range){
         int[] q;
         int[] f;
         int aux;
@@ -436,17 +522,17 @@ public class Main {
                 contador=contador+a[i];
                 i++;
             }else{
-            if(!top)
-            aux=r.nextInt(n);// m+1
-            else aux=r.nextInt(topq+1);
-            if(contador + aux > n){
-                a[i]=n-contador;
-                contador=contador+a[i];
-            } else{
-                a[i]=aux;
-                contador=contador+aux;
-            }
-            i++;  }
+                if(!range)
+                     aux=r.nextInt(n);// m+1
+                else aux=minq+r.nextInt(maxq-minq+1);
+                if(contador + aux > n){
+                    a[i]=n-contador;
+                    contador=contador+a[i];
+                } else{
+                    a[i]=aux;
+                    contador=contador+aux;
+                }
+                i++;  }
         }
         q=new int[i];
         for (int x=0; x<i;x++){
@@ -455,30 +541,32 @@ public class Main {
         i=0;
         contador=0;
         a=new int[n];
-       while(contador<n){
+        while(contador<n){
            if(i==n-1){
-            a[i]=n-contador;
-            contador=contador+a[i];
-            i++;  
+                a[i]=n-contador;
+                contador=contador+a[i];
+                 i++;  
                
-           } else{
-            if(!top)
-            aux=r.nextInt(n);// m+1
-            else aux=r.nextInt(topf+1);
-            a[i]=aux;
-            contador=contador+aux;
-            i++;  
-           }
+            } else{
+                if(!range)
+                    aux=r.nextInt(n);// m+1
+                else aux=minf+r.nextInt(maxf-minf+1);
+                a[i]=aux;
+                contador=contador+aux;
+                i++;  
+            }
         } 
         f=new int[i];
         for (int x=0; x<i;x++){
             f[x]=a[x];
         }
+        
+          System.out.println("");
           System.out.print("q:  ");
-          System.out.println(Arrays.toString(q)+"\r\n");
+          System.out.println(Arrays.toString(q));
           System.out.print("f:  ");
-          System.out.println(Arrays.toString(f)+"\r\n");
-       
+          System.out.println(Arrays.toString(f));
+          
         return new MyResult(q,f);
     }
     
