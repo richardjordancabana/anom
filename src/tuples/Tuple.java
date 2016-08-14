@@ -53,13 +53,13 @@ public class Tuple {
 		double resultado = -1.0;
 		if (!correct(n, base)) {
 			System.out.println("Error, first array non-valid!");
-			resultado = -1.0;
+			resultado = 0.0;
 		} else if (!correct(n, anom1)) {
 			System.out.println("Error, second array non-valid");
-			resultado = -1.0;
+			resultado = 0.0;
 		} else if (!correct(n, anom2)) {
 			System.out.println("Error, third array non-valid");
-			resultado = -1.0;
+			resultado = 0.0;
 		} else {
 			SearchResult sBase = new SearchResult(); 
 			SearchResult sAnom1 = new SearchResult();

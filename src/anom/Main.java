@@ -242,6 +242,7 @@ public class Main {
         }
         for (int k=0;k<n;k++)
                     v[k]=v[k+1];
+        v[n]=0;
         
         return v;
         
@@ -346,7 +347,7 @@ public class Main {
 
 
     public static void test5() {
-        int n = 10000;
+            int n = 10000;
             int Q = 18; 
             int []f = {504,526,551,549,574,582,530,574,587,565,565,545,577,563,572,551,530,555};
             int R = 500;
@@ -360,10 +361,11 @@ public class Main {
     
     //metodo dado un n genera q,f   times indica cuantas veces repite el proceso
     //opt y voraz devuelven la media de todas los resultados obtenidos en times veces
-    public static void test(int n,int times, double opt,double voraz){
+    public static void test(int n,int times, double opt,double voraz,int minq, int maxq, int minf, int maxf){
            //int n=5;
             double o=0;
             double v=0;
+            double ov=0;
             for(int i =0; i< times;i++){
         
                 Main m = new Main();
@@ -373,7 +375,7 @@ public class Main {
                     a = m.generateQF(100,5,5,true);
                 }*/
                  //for (int i=0; i<100;i++)
-                    a = m.generateQF(n,5,9,5,9,true); // a true utiliza los rangos min max
+                    a = m.generateQF(n,minq,maxq,minf,maxf,true); // a true utiliza los rangos min max
                 int[] f=a.getFirst();
                 int[] c=a.getSecond();
                 Appointment apo = new Appointment(f, c);
@@ -389,6 +391,7 @@ public class Main {
 
                 double x=0;
                 double y=0;
+                double z=0;
 
                 vBase=cutArray(vBase);
                 vRandom=cutArray(vRandom);
@@ -413,11 +416,20 @@ public class Main {
               y=Tuple.distance(n, vBase, vRandom, vVoraz);
               System.out.println(y);
               
+              if(n<=25){
+              System.out.print(" Distancia (VBASE,VVORAZ,VOPTIMO) : ");
+              z=Tuple.distance(n, vBase, vVoraz, vOptimo);
+              if (z<0)
+                  System.out.println("NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEGATIVO");
+              System.out.println(z);
+              }
               if(n>25){
               o=0;
               v+=y;
+              ov=0;
               }else
               {
+              ov+=z;    
               o+=x;
               v+=y;
               }
@@ -426,10 +438,113 @@ public class Main {
             
             voraz=v/times;
             opt=o/times;
+            double ovtotal= ov/times;
            System.out.print("Valor voraz :  ");
            System.out.println(voraz); 
            System.out.print("Valor optimo :  ");
            System.out.println(opt); 
+           System.out.print("Valor OPTIMO/VORAZ :  ");
+           System.out.println(ovtotal); 
+    }
+    
+    public static void testK(int n,int times, double opt,double voraz,int minq, int maxq, int minf, int maxf){
+           //int n=5;
+            double o=0;
+            double v=0;
+            double r=0;
+            for(int i =0; i< times;i++){
+        
+                Main m = new Main();
+                MyResult a;
+                /*for (int i=0; i<100;i++){
+                    System.out.println("i:"+i+" ");
+                    a = m.generateQF(100,5,5,true);
+                }*/
+                 //for (int i=0; i<100;i++)
+                    a = m.generateQF(n,minq,maxq,minf,maxf,true); // a true utiliza los rangos min max
+                int[] f=a.getFirst();
+                int[] c=a.getSecond();
+                Appointment apo = new Appointment(f, c);
+
+                int[] vBase=getV(n,f);
+                int[] vRandom=anomRandom(n,f.length,f,c.length,c);
+                int[] vOptimo;
+                if(n<=25)
+                    vOptimo= apo.chocoLex();
+                else   vOptimo= null;
+                int[] vVoraz = anom2(n,f.length,f,c.length,c); 
+
+
+                double x=0;
+                double y=0;
+                double z=0;
+
+                vBase=cutArray(vBase);
+                vRandom=cutArray(vRandom);
+                if(n<=25)
+                vOptimo=cutArray(vOptimo);
+                vVoraz=cutArray(vVoraz);
+
+              System.out.print("VBASE :  ");
+              System.out.println(Arrays.toString(vBase)); 
+              System.out.print("vRandom :  ");
+              System.out.println(Arrays.toString(vRandom)); 
+              System.out.print("vOptimo :  ");
+              System.out.println(Arrays.toString(vOptimo)); 
+              System.out.print("vVoraz :  ");
+              System.out.println(Arrays.toString(vVoraz)); 
+              if(n<=25){
+              System.out.print(" KOPTIMO: ");
+              x=getK(vOptimo);
+              System.out.println(x);
+              }
+              System.out.print(" KRANDOM ");
+              y=getK(vRandom);
+              System.out.println(y);
+              System.out.print(" KVORAZ ");
+              z=getK(vVoraz);
+              System.out.println(z);
+              
+              if(n>25){
+              o=0;
+              r+=y;
+              v+=z;
+              }else
+              {
+              v+=z;    
+              o+=x;
+              r+=y;
+              }
+          
+            }
+            
+            voraz=v/times;
+            opt=o/times;
+            double ran= r/times;
+           System.out.print("KRANDOM :  ");
+           System.out.println(ran); 
+           System.out.print("Koptimo :  ");
+           System.out.println(opt); 
+           System.out.print("Kvoraz:  ");
+           System.out.println(voraz); 
+    }
+    
+    
+    
+    public static int getK(int[] v)
+    {
+        int min=-1;
+        int i=0;
+        while(i<v.length && min==-1){
+            if (v[i]!=0)
+                min=i+1;
+            i++;
+        }
+        if (min!=-1)
+            return min;
+        else return -1;
+            
+        
     }
     
     public static void testEjemplos(){
@@ -476,9 +591,29 @@ public class Main {
     public  static void main(String []args) {
             double res1=0;
             double res2=0;
-            test(100,100,res1,res2);
+            //test(100,100,res1,res2,0,20,10,20);
+            testK(10000,10,res1,res2,0,3000,1000,2000);
+            //testK(1000,10,res1,res2,0,300,100,200);
+            //testK(100,10,res1,res2,0,30,10,20);
+            //testK(25,10,res1,res2,0,7,5,10);
+            //testK(10,10,res1,res2,0,3,3,7);
+            //testK(5,10,res1,res2,0,2,1,3);
+            /*
+            int[] v1={2,8};
+            int[] v2={5,5};
             
-
+             int[] vVoraz = anom2(5,v1.length,v1,v2.length,v2); 
+             System.out.print("vVoraz :  ");
+             System.out.println(Arrays.toString(vVoraz)); 
+             */
+            /*
+            int[] v1={5};
+            int[] v2={0,5};
+            
+             int[] vRandom = anomRandom(5,v1.length,v1,v2.length,v2); 
+             System.out.print("vRandom :  ");
+             System.out.println(Arrays.toString(vRandom)); 
+             */
             return;
             
         //test1();
@@ -501,7 +636,8 @@ public class Main {
     public static int[] getV(int n, int[]q){
         int[] a= new int [n];
         for (int i =0;i<q.length;i++){
-            a[q[i]-1]++;
+           if(q[i]-1 >= 0)
+                a[q[i]-1]++;
         }
         
         return a;
