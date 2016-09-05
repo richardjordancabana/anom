@@ -1,5 +1,6 @@
 package anom;
 
+import heuristic.Greedy;
 import java.util.Arrays;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.IntConstraintFactory;
@@ -447,6 +448,95 @@ public class Main {
            System.out.println(ovtotal); 
     }
     
+    public static void testHeuristico(int n,int times, double opt,double voraz,int minq, int maxq, int minf, int maxf){
+           //int n=5;
+            double o=0;
+            double v=0;
+            double ov=0;
+            for(int i =0; i< times;i++){
+        
+                Main m = new Main();
+                MyResult a;
+                /*for (int i=0; i<100;i++){
+                    System.out.println("i:"+i+" ");
+                    a = m.generateQF(100,5,5,true);
+                }*/
+                 //for (int i=0; i<100;i++)
+                    a = m.generateQF(n,minq,maxq,minf,maxf,true); // a true utiliza los rangos min max
+                int[] f=a.getFirst();
+                int[] c=a.getSecond();
+                Appointment apo = new Appointment(f, c);
+
+                int[] vBase=getV(n,f);
+                int[] vRandom=anomRandom(n,f.length,f,c.length,c);
+                int[] vOptimo;
+                if(n<=25)
+                    vOptimo= apo.chocoLex();
+                else   vOptimo= null;
+                Greedy g=new Greedy();
+                int[] vHeuristico = g.generate(n,f.length,f,c.length,c);
+                        //anom2(n,f.length,f,c.length,c); 
+
+
+                double x=0;
+                double y=0;
+                double z=0;
+
+                vBase=cutArray(vBase);
+                vRandom=cutArray(vRandom);
+                if(n<=25)
+                vOptimo=cutArray(vOptimo);
+                vHeuristico=cutArray(vHeuristico);
+
+              System.out.print("VBASE :  ");
+              System.out.println(Arrays.toString(vBase)); 
+              System.out.print("vRandom :  ");
+              System.out.println(Arrays.toString(vRandom)); 
+              System.out.print("vOptimo :  ");
+              System.out.println(Arrays.toString(vOptimo)); 
+              System.out.print("vHeuristico :  ");
+              System.out.println(Arrays.toString(vHeuristico)); 
+              if(n<=25){
+              System.out.print(" Distancia (VBASE,VRANDOM,VOPTIMO) : ");
+              x=Tuple.distance(n, vBase, vRandom, vOptimo);
+              System.out.println(x);
+              }
+              System.out.print(" Distancia (VBASE,VRANDOM,VHEURISTICO) : ");
+              y=Tuple.distance(n, vBase, vRandom, vHeuristico);
+              System.out.println(y);
+              
+              if(n<=25){
+              System.out.print(" Distancia (VBASE,VHEURISTICO,VOPTIMO) : ");
+              z=Tuple.distance(n, vBase, vHeuristico, vOptimo);
+              if (z<0)
+                  System.out.println("NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEGATIVO");
+              System.out.println(z);
+              }
+              if(n>25){
+              o=0;
+              v+=y;
+              ov=0;
+              }else
+              {
+              ov+=z;    
+              o+=x;
+              v+=y;
+              }
+          
+            }
+            
+            voraz=v/times;
+            opt=o/times;
+            double ovtotal= ov/times;
+           System.out.print("Valor heuristico :  ");
+           System.out.println(voraz); 
+           System.out.print("Valor optimo :  ");
+           System.out.println(opt); 
+           System.out.print("Valor OPTIMO/HEURISTICO :  ");
+           System.out.println(ovtotal); 
+    }
+    
+    
     public static void testK(int n,int times, double opt,double voraz,int minq, int maxq, int minf, int maxf){
            //int n=5;
             double o=0;
@@ -528,6 +618,88 @@ public class Main {
            System.out.print("Kvoraz:  ");
            System.out.println(voraz); 
     }
+    public static void testKHeuristic(int n,int times, double opt,double voraz,int minq, int maxq, int minf, int maxf){
+           //int n=5;
+            double o=0;
+            double v=0;
+            double r=0;
+            for(int i =0; i< times;i++){
+        
+                Main m = new Main();
+                MyResult a;
+                /*for (int i=0; i<100;i++){
+                    System.out.println("i:"+i+" ");
+                    a = m.generateQF(100,5,5,true);
+                }*/
+                 //for (int i=0; i<100;i++)
+                    a = m.generateQF(n,minq,maxq,minf,maxf,true); // a true utiliza los rangos min max
+                int[] f=a.getFirst();
+                int[] c=a.getSecond();
+                Appointment apo = new Appointment(f, c);
+
+                int[] vBase=getV(n,f);
+                int[] vRandom=anomRandom(n,f.length,f,c.length,c);
+                int[] vOptimo;
+                if(n<=25)
+                    vOptimo= apo.chocoLex();
+                else   vOptimo= null;
+                Greedy g=new Greedy();
+                int[] vHeuristico = g.generate(n,f.length,f,c.length,c);
+
+
+                double x=0;
+                double y=0;
+                double z=0;
+
+                vBase=cutArray(vBase);
+                vRandom=cutArray(vRandom);
+                if(n<=25)
+                vOptimo=cutArray(vOptimo);
+                vHeuristico=cutArray(vHeuristico);
+
+              System.out.print("VBASE :  ");
+              System.out.println(Arrays.toString(vBase)); 
+              System.out.print("vRandom :  ");
+              System.out.println(Arrays.toString(vRandom)); 
+              System.out.print("vOptimo :  ");
+              System.out.println(Arrays.toString(vOptimo)); 
+              System.out.print("vHeuristico :  ");
+              System.out.println(Arrays.toString(vHeuristico)); 
+              if(n<=25){
+              System.out.print(" KOPTIMO: ");
+              x=getK(vOptimo);
+              System.out.println(x);
+              }
+              System.out.print(" KRANDOM ");
+              y=getK(vRandom);
+              System.out.println(y);
+              System.out.print(" KHeuristico ");
+              z=getK(vHeuristico);
+              System.out.println(z);
+              
+              if(n>25){
+              o=0;
+              r+=y;
+              v+=z;
+              }else
+              {
+              v+=z;    
+              o+=x;
+              r+=y;
+              }
+          
+            }
+            
+            voraz=v/times;
+            opt=o/times;
+            double ran= r/times;
+           System.out.print("KRANDOM :  ");
+           System.out.println(ran); 
+           System.out.print("Koptimo :  ");
+           System.out.println(opt); 
+           System.out.print("Kheuristico:  ");
+           System.out.println(voraz); 
+    }
     
     
     
@@ -591,13 +763,19 @@ public class Main {
     public  static void main(String []args) {
             double res1=0;
             double res2=0;
+           // testHeuristico(5,100,res1,res2,0,2,0,2);
+           // testHeuristico(10,100,res1,res2,0,3,0,3);
+           // testHeuristico(25,100,res1,res2,3,7,3,7);
+            //testHeuristico(50,100,res1,res2,5,8,5,8);
+           // testHeuristico(5,100,res1,res2,0,2,0,2);
+            
             //test(100,100,res1,res2,0,20,10,20);
-            testK(10000,10,res1,res2,0,3000,1000,2000);
-            //testK(1000,10,res1,res2,0,300,100,200);
-            //testK(100,10,res1,res2,0,30,10,20);
-            //testK(25,10,res1,res2,0,7,5,10);
-            //testK(10,10,res1,res2,0,3,3,7);
-            //testK(5,10,res1,res2,0,2,1,3);
+            testKHeuristic(10000,100,res1,res2,0,3000,1000,2000);
+            //testKHeuristic(1000,100,res1,res2,0,300,100,200);
+            //testKHeuristic(100,100,res1,res2,0,30,10,20);
+            //testKHeuristic(25,100,res1,res2,0,7,5,10);
+            //testKHeuristic(10,100,res1,res2,0,3,3,7);
+            //testKHeuristic(5,100,res1,res2,0,2,1,3);
             /*
             int[] v1={2,8};
             int[] v2={5,5};
