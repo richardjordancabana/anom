@@ -770,7 +770,8 @@ public class Main {
            // testHeuristico(5,100,res1,res2,0,2,0,2);
             
             //test(100,100,res1,res2,0,20,10,20);
-            testKHeuristic(10000,100,res1,res2,0,3000,1000,2000);
+            testKHeuristic(10000,100,res1,res2,0,200,500,1000); // hay  que mejorar los rangos de los cuasis y de los recursos
+            // para que se acerquen más a un caso real, sino se pueden desviar los resultados
             //testKHeuristic(1000,100,res1,res2,0,300,100,200);
             //testKHeuristic(100,100,res1,res2,0,30,10,20);
             //testKHeuristic(25,100,res1,res2,0,7,5,10);
